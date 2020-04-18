@@ -18,13 +18,15 @@ public class ImagePix {
 
     public static RSA rsa;
 
+
+
     public static void main(String[] args) {
         try {
             System.out.println("Processing the image...");
             rsa = new RSA(1024);
             // Upload the image
 
-            BufferedImage image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\pic.jpg"));
+            BufferedImage image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\pic2.jpg"));
             image = breakAndArrangeImage(image, "b");
             ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\blockedAndGrid.jpg"));
             int width = image.getWidth();
@@ -88,8 +90,14 @@ public class ImagePix {
                 filearr[i] = rsa.encrypt(new BigInteger(String.valueOf(p & 0xffffff)));
                 //fw.write(filearr[i]+" ");
                 t = al<<24 | (filearr[i].mod(new BigInteger("16777216"))).intValue();
-                if(i==0)
+                if(i==0){
                     System.out.println("After Encryption: "+p+" "+t+" "+filearr[i]);
+                    System.out.println((p>>24)&0xff);
+                    System.out.println((p>>16)&0xff);
+                    System.out.println((p>>8)&0xff);
+                    System.out.println((p)&0xff);
+                }
+
                 encImage[i] = t;
             }
             objectOut.writeObject(filearr);

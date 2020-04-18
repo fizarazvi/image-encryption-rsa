@@ -51,10 +51,10 @@ public final class RSA {
 
         BigInteger m = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
 
-        publicKey = new BigInteger(bits / 2, 100, r);
-
+        publicKey = new BigInteger("65537");
+        BigInteger two = new BigInteger("2");
         while (m.gcd(publicKey).intValue() > 1) {
-            publicKey = new BigInteger(bits / 2, 100, r);
+            publicKey = publicKey.add(two);
         }
         privateKey = publicKey.modInverse(m);
 
@@ -64,7 +64,7 @@ public final class RSA {
         Cq = p.modInverse(q);
         mul1 = q.multiply(Cp);
         mul2 = p.multiply(Cq);
-        System.out.println(publicKey.bitLength()+" "+publicKey);
+        System.out.println(publicKey.bitLength()+" "+privateKey.bitLength());
         System.out.println(p.bitLength());
         System.out.println(q.bitLength());
         System.out.println(m.bitLength());
