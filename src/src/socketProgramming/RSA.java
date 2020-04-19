@@ -18,7 +18,6 @@ public final class RSA {
         generateKeys(bits);
     }
 
-
     public static synchronized BigInteger encrypt(BigInteger message, BigInteger publicKey, BigInteger modulus ) {
         return message.modPow(publicKey, modulus);
     }

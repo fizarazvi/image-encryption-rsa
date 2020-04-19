@@ -64,13 +64,13 @@ public class BlocksAndGrid {
         } else {
             SubImgage = new BufferedImage[4];
         }
-        System.out.println(tWidth+" "+tHeight+" "+row+" "+col);
+        //System.out.println(tWidth+" "+tHeight+" "+row+" "+col);
         int c=0;
         for (int i = 0; i < row; i++) {
             y = 0;
             for (int j = 0; j < col; j++) {
 
-                System.out.println("creating piece: "+i+" "+j);
+                //System.out.println("creating piece: "+i+" "+j);
 
                 SubImgage[c] = originalImgage.getSubimage(y, x, eWidth, eHeight);
                 //File outputfile = new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\"+c+".jpg");
@@ -87,7 +87,7 @@ public class BlocksAndGrid {
             x += eHeight;
         }
 
-        System.out.println("Splitting done");
+        //System.out.println("Splitting done");
 
         //writing mini images into image files
         c= SubImgage.length-1;
