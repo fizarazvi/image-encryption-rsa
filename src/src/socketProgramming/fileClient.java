@@ -1,4 +1,6 @@
-import java.net.*; 
+package socketProgramming;
+
+import java.net.*;
 import java.io.*; 
 
 public class fileClient{
@@ -60,7 +62,7 @@ public class fileClient{
         
 	}
 	public static void main(String[] args) {
-		fileClient fc = new fileClient("localhost",5000);
+		fileClient fc = new fileClient("localhost",4333);
 		/*byte []b = new byte[2002];
 		Socket sr = new Socket("localhost", 5000);
 		InputStream is = sr.getInputStream();

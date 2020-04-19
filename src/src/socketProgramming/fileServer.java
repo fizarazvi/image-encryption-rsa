@@ -1,4 +1,6 @@
-import java.net.*; 
+package socketProgramming;
+
+import java.net.*;
 import java.io.*; 
 
 public class fileServer{
@@ -7,7 +9,7 @@ public class fileServer{
 	public fileServer(int port){
 		try{
 			byte []b = new byte[2002];
-			s = new ServerSocket(5000);
+			s = new ServerSocket(4333);
 			System.out.println("Server > Waiting for client to connect...");
 			sr = s.accept();
 			System.out.println("Server > Client connected...");
