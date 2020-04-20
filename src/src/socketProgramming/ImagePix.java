@@ -1,4 +1,6 @@
 package socketProgramming;
+import socketProgramming.RSA;
+import socketProgramming.BlocksAndGrid;
 import javax.imageio.ImageIO;
 
 import java.awt.*;
@@ -7,34 +9,35 @@ import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.*;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 import static socketProgramming.BlocksAndGrid.*;
 
 
 public class ImagePix {
 
-    public static RSA rsa;
-    public static BigInteger e, n;
-    private String path;
+    String path;
+    BigInteger e, n;
+    RSA rsa;
+
+    public ImagePix(RSA rsa){
+        this.rsa = rsa;
+    }
 
     public ImagePix(String path, BigInteger e, BigInteger n){
+        this.path = path;
         this.e = e;
         this.n = n;
-        this.path = path;
     }
 
-
-    public static void main(String[] args) {
-
-    }
-
-    protected String encrypt(){
-        int width=0, height=0;
+    public String encrypt(){
+        int width = 0;
+        int height=0;
         try {
             System.out.println("Processing the image...");
             // Upload the image
 
-            BufferedImage image = ImageIO.read(new File(path));
+            BufferedImage image = ImageIO.read(new File(this.path));
             image = breakAndArrangeImage(image, "b");
             ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Client\\blockedAndGrid.jpg"));
             width = image.getWidth();
@@ -57,14 +60,65 @@ public class ImagePix {
             System.out.println("Done! Cast your spells with the text file and press Enter...");
             //System.in.read();
 
-
         } catch (Exception exc) {
             System.out.println("Interrupted: " + exc.getMessage());
         }
-        return width +" "+ height;
+        return width+" "+height;
     }
 
-    private static int[] writeTextFile(String path, int[] data, int width) throws IOException {
+
+    public static void main(String[] args) {
+//        try {
+//            System.out.println("Processing the image...");
+//            // Upload the image
+//
+//            BufferedImage image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\pic2.jpg"));
+//            image = breakAndArrangeImage(image, "b");
+//            ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\blockedAndGrid.jpg"));
+//            int width = image.getWidth();
+//            int height = image.getHeight();
+//            int[] pixels = new int[width * height];
+//            long startTime , elapsedTime;
+//
+//
+//            // Retrieve pixel info and store in 'pixels' variable
+//            PixelGrabber pgb = new PixelGrabber(image, 0, 0, width, height, pixels, 0, width);
+//            pgb.grabPixels();
+//
+//            //Write pixels to file and return encrypted pixel data
+//            startTime = System.nanoTime();
+//            int[] encryptedImagePixels = this.writeTextFile("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\encrypted.txt", pixels, width);
+//            textToImage("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\encrypted.jpeg", width, height, encryptedImagePixels);
+//            elapsedTime = System.nanoTime() - startTime;
+//            System.out.println("for enc it takes "+ elapsedTime/1000000+"ms.");
+//            // It's supposed that user modifies pixels file here
+//            System.out.println("Done! Cast your spells with the text file and press Enter...");
+//            System.in.read();
+//
+//
+//            //Reading the encrypted file
+//            startTime = System.nanoTime();
+//            int[] parsedPixels = readTextFile("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\encrypted.txt", width, height);
+//
+//            // Convert pixels to image and save
+//            textToImage("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\decrypted.jpeg", width, height, parsedPixels);
+//            elapsedTime = System.nanoTime() - startTime;
+//            System.out.println("for dec it takes "+ elapsedTime/1000000+"ms.");
+//
+//            image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\decrypted.jpeg"));
+//            image = breakAndArrangeImage(image, "b");
+//
+//            ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\finalDecrypt.jpg"));
+//
+//
+//        } catch (Exception exc) {
+//            System.out.println("Interrupted: " + exc.getMessage());
+//        }
+
+
+    }
+
+    private int[] writeTextFile(String path, int[] data, int width) throws IOException {
 
 
         int encImage[] = new int[data.length];
@@ -74,14 +128,12 @@ public class ImagePix {
         try{
             FileOutputStream fileOut = new FileOutputStream(path);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-            //FileWriter fw = new FileWriter("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\encryptedNew.txt");
             BigInteger x,y;
             int al = 255,t;
             int i=0;
             for(i = 0; i < filearr.length; i++) {
                 p = data[i];
-                filearr[i] = RSA.encrypt(new BigInteger(String.valueOf(p & 0xffffff)), e, n);
-                //fw.write(filearr[i]+" ");
+                filearr[i] = RSA.encrypt(new BigInteger(String.valueOf(p & 0xffffff)), this.e, this.n);
                 t = al<<24 | (filearr[i].mod(new BigInteger("16777216"))).intValue();
                 if(i==0){
                     System.out.println("After Encryption: "+p+" "+t+" "+filearr[i]);
@@ -94,13 +146,32 @@ public class ImagePix {
                 encImage[i] = t;
             }
             objectOut.writeObject(filearr);
+            objectOut.close();
+            fileOut.close();
             System.out.println("filearr "+filearr.length+"i "+i);
         }catch(Exception e){System.out.println(e);}
         return encImage;
         //f.close();
     }
 
-    private static int[] readTextFile(String path) throws IOException {
+    public void decrypt(String path, int width, int height) throws IOException {
+        //Reading the encrypted file
+        long startTime, elapsedTime;
+        startTime = System.nanoTime();
+        int[] parsedPixels = readTextFile(path, width, height);
+
+        // Convert pixels to image and save
+        textToImage("C:\\Users\\Fiza\\Pictures\\Server\\decrypted.jpeg", width, height, parsedPixels);
+        elapsedTime = System.nanoTime() - startTime;
+        System.out.println("for dec it takes "+ elapsedTime/1000000+"ms.");
+
+        BufferedImage image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Server\\decrypted.jpeg"));
+        image = breakAndArrangeImage(image, "b");
+
+        ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Server\\finalDecrypt.jpg"));
+    }
+
+    private int[] readTextFile(String path, int width, int height) throws IOException {
         System.out.println("Processing text file...");
 
 
@@ -113,38 +184,24 @@ public class ImagePix {
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
             Object obj = objectIn.readObject();
             BigInteger[] filearr = (BigInteger[])obj;
+
             int[] data = new int[filearr.length];
             BigInteger x, y;
             int t=0,al=255,q;
+            //System.out.println("len "+str.length);
             System.out.println("len arr "+filearr.length);
             for(int i=0;i<filearr.length;i++){
-                y = rsa.decrypt(filearr[i]);
+                y = this.rsa.decrypt(filearr[i]);
                 q = al<<24 | y.intValue();
                 if(i==0){System.out.println("After Decryp "+" "+q);}
                 data[i] = q;
             }
+            objectIn.close();
+            fileIn.close();
             return data;
-        }catch(Exception e) {System.out.println("failure in reading text file");return null;}
+        }catch(Exception e) {System.out.println(e);return null;}
 
 
-    }
-
-    public static void decrypt(String path, int width, int height){
-        Long startTime, elapsedTime;
-        try{
-            startTime = System.nanoTime();
-            int[] parsedPixels = readTextFile("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\encrypted.txt");
-
-            // Convert pixels to image and save
-            textToImage("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\decrypted.jpeg", width, height, parsedPixels);
-            elapsedTime = System.nanoTime() - startTime;
-            System.out.println("for dec it takes "+ elapsedTime/1000000+"ms.");
-
-            BufferedImage image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\decrypted.jpeg"));
-            image = breakAndArrangeImage(image, "b");
-
-            ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Screenshots\\Big\\finalDecrypt.jpg"));
-        }catch (Exception e){System.out.println("failure in imagepix.decrypt()");}
     }
 
     private static void textToImage(String path, int width, int height, int[] data) throws IOException {

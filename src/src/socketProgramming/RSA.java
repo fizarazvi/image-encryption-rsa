@@ -3,7 +3,6 @@ package socketProgramming;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import javax.swing.JOptionPane;
 
 
 public final class RSA {
