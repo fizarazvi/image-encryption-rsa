@@ -23,20 +23,16 @@ public class fileServer{
 		System.out.println("Sending keys to client..");
 
 		InputStream is = sr.getInputStream();
+		String path = "..\\res\\server\\";
 		FileOutputStream fr = new FileOutputStream("C:\\Users\\Fiza\\Pictures\\Server\\encryptedNew.txt");
 		byte[] b = new byte[8192];
 		int count;
 		while((count = is.read(b))>0)
 			fr.write(b, 0 , count);
 		System.out.println("File rec server");
-//		DataInputStream dis = new DataInputStream(sr.getInputStream());
-//		String dimensions = dis.readUTF();
-//		dis.close();
-//		String[] str = dimensions.split("\\s+");
-//		int width = Integer.parseInt(str[0]);
-//		int height = Integer.parseInt(str[1]);
+
 		ImagePix img = new ImagePix(rsa);
-		img.decrypt("C:\\Users\\Fiza\\Pictures\\Server\\encryptedNew.txt", 184, 272);
+		img.decrypt("C:\\Users\\Fiza\\Pictures\\Server\\encryptedNew.txt");
 
 	}
 
