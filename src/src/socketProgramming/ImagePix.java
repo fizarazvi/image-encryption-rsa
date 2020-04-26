@@ -16,7 +16,7 @@ import static socketProgramming.BlocksAndGrid.*;
 
 public class ImagePix {
 
-    String path;
+    String path,nameImg, name;
     BigInteger e, n;
     RSA rsa;
     int height, width;
@@ -25,8 +25,10 @@ public class ImagePix {
         this.rsa = rsa;
     }
 
-    public ImagePix(String path, BigInteger e, BigInteger n){
+    public ImagePix(String path, String name, BigInteger e, BigInteger n){
         this.path = path;
+        this.nameImg = name;
+        this.name = this.nameImg.split("\\.")[0];
         this.e = e;
         this.n = n;
     }
@@ -38,9 +40,9 @@ public class ImagePix {
             System.out.println("Processing the image...");
             // Upload the image
 
-            BufferedImage image = ImageIO.read(new File(this.path));
+            BufferedImage image = ImageIO.read(new File(this.path+this.nameImg));
             image = breakAndArrangeImage(image, "b");
-            ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Client\\blockedAndGrid.jpg"));
+            ImageIO.write(image, "png", new File(this.path+this.name+"_blockedAndGrid.jpg"));
             width = image.getWidth();
             height = image.getHeight();
             int[] pixels = new int[width * height];
@@ -53,8 +55,8 @@ public class ImagePix {
 
             //Write pixels to file and return encrypted pixel data
             startTime = System.nanoTime();
-            int[] encryptedImagePixels = writeTextFile("C:\\Users\\Fiza\\Pictures\\Client\\encrypted.txt", pixels, width, height);
-            textToImage("C:\\Users\\Fiza\\Pictures\\Client\\encrypted.jpeg", width, height, encryptedImagePixels);
+            int[] encryptedImagePixels = writeTextFile(this.path+"encrypted.txt", pixels, width, height);
+            textToImage(this.path+this.name+"_encrypted.jpeg", width, height, encryptedImagePixels);
             elapsedTime = System.nanoTime() - startTime;
             System.out.println("for enc it takes "+ elapsedTime/1000000+"ms.");
             // It's supposed that user modifies pixels file here
@@ -164,20 +166,20 @@ public class ImagePix {
         //Reading the encrypted file
         long startTime, elapsedTime;
         startTime = System.nanoTime();
-        int[] parsedPixels = readTextFile(path);
+        int[] parsedPixels = readTextFile(path+"encrypted.txt");
 
         // Convert pixels to image and save
         System.out.println("before dec");
-        textToImage("C:\\Users\\Fiza\\Pictures\\Server\\decrypted.jpeg", this.width, this.height, parsedPixels);
+        textToImage(path+"decrypted.jpeg", this.width, this.height, parsedPixels);
         elapsedTime = System.nanoTime() - startTime;
         System.out.println("for dec it takes "+ elapsedTime/1000000+"ms.");
         System.out.println("before bufferedimage");
 
-        BufferedImage image = ImageIO.read(new File("C:\\Users\\Fiza\\Pictures\\Server\\decrypted.jpeg"));
+        BufferedImage image = ImageIO.read(new File(path+"decrypted.jpeg"));
         image = breakAndArrangeImage(image, "b");
         System.out.println("after bufferedimage");
 
-        ImageIO.write(image, "png", new File("C:\\Users\\Fiza\\Pictures\\Server\\finalDecrypt.jpg"));
+        ImageIO.write(image, "png", new File(path+"finalDecrypt.jpg"));
     }
 
     private int[] readTextFile(String path) throws IOException {
@@ -207,7 +209,7 @@ public class ImagePix {
                 for(int j=0;j<this.width;j++){
                     //y = this.rsa.decrypt(filearr[i][j]);
                     //q = al<<24 | y.intValue();
-                    q = this.rsa.decrypt(filearr[i][j]).intValue() & 0xffffffff;
+                    q = this.rsa.decrypt(filearr[i][j]).intValue();
                     if(i==0 && j==0){System.out.println("After Decryp "+" "+q);}
                     data[pix] = q;
                     pix++;

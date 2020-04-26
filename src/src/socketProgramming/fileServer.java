@@ -24,7 +24,7 @@ public class fileServer{
 
 		InputStream is = sr.getInputStream();
 		String path = "..\\res\\server\\";
-		FileOutputStream fr = new FileOutputStream("C:\\Users\\Fiza\\Pictures\\Server\\encryptedNew.txt");
+		FileOutputStream fr = new FileOutputStream(path+"encrypted.txt");
 		byte[] b = new byte[8192];
 		int count;
 		while((count = is.read(b))>0)
@@ -32,7 +32,7 @@ public class fileServer{
 		System.out.println("File rec server");
 
 		ImagePix img = new ImagePix(rsa);
-		img.decrypt("C:\\Users\\Fiza\\Pictures\\Server\\encryptedNew.txt");
+		img.decrypt(path);
 
 	}
 

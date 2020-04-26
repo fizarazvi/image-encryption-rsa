@@ -19,12 +19,12 @@ public class fileClient{
 		String str[] = keys.split("\\s+");
 		BigInteger e = new BigInteger(str[0]);
 		BigInteger n = new BigInteger(str[1]);
-
-		ImagePix img = new ImagePix("C:\\Users\\Fiza\\Pictures\\Client\\pic.jpg", e, n);
+		String path = "..\\res\\client\\";
+		ImagePix img = new ImagePix(path, "pic.jpg", e, n);
 		String dimensions = img.encrypt();
 
 		System.out.println("Sending file...");
-		FileInputStream fr = new FileInputStream("C:\\Users\\Fiza\\Pictures\\Client\\encrypted.txt");
+		FileInputStream fr = new FileInputStream(path+"encrypted.txt");
 		byte[] b = new byte[8192];
 		int count;
 		OutputStream os = sr.getOutputStream();
